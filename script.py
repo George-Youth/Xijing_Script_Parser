@@ -54,7 +54,7 @@ def parse_script(html_content, save_path):
                 title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
                 is_header = False
             else:  # 其余为次级标题或其它
-                heading = doc.add_paragraph(style='Heading' + paragraph.name[-1])
+                heading = doc.add_paragraph(style='Heading ' + paragraph.name[-1])
                 run_heading = heading.add_run(header_text.strip())
                 run_heading.font.size = Pt(8 + 2 * eval(paragraph.name[-1]))
                 run_heading.font.color.rgb = RGBColor(0, 0, 0)

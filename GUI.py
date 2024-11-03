@@ -15,7 +15,7 @@ def on_choose_path(entry_path):
 def on_confirm(entry_id, entry_path, entry_file_name):
     # 此处添加确认下载逻辑
     script_id = entry_id.get().strip()
-    save_path = entry_path.get().strip()
+    save_path = os.path.normpath(entry_path.get().strip())
     file_name = entry_file_name.get().strip()
 
     if not save_path:
@@ -28,7 +28,8 @@ def on_confirm(entry_id, entry_path, entry_file_name):
     else:
         full_file_name = f"script_{script_id}.docx" if script_id else "script_default.docx"
 
-    full_path = os.path.join(save_path, full_file_name)
+    full_path = os.path.normpath(os.path.join(save_path, full_file_name))
+    print(full_path)
 
     # 这里可以添加你想要执行下载的逻辑
     # 例如：
@@ -69,10 +70,10 @@ def GUI_mainloop():
     frame_path = tk.Frame(root)
     frame_path.pack(pady=10)
 
-    label_path = tk.Label(frame_path, text="保存路径：")
+    label_path = tk.Label(frame_path, text="    保存路径：")
     label_path.pack(side=tk.LEFT)
 
-    entry_path = tk.Entry(frame_path, width=40)  # 调整宽度以适应按钮
+    entry_path = tk.Entry(frame_path, width=38)  # 调整宽度以适应按钮
     entry_path.pack(side=tk.LEFT, padx=(5, 0))  # 右侧留出间距
 
     # 选择路径按钮
@@ -80,7 +81,8 @@ def GUI_mainloop():
     choose_button.pack(side=tk.LEFT)
 
     # 设置初始保存路径为桌面
-    default_save_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    default_save_path = os.path.normpath(os.path.expanduser(os.path.join("~", "Desktop")))
+    print(default_save_path)
     entry_path.insert(0, default_save_path)  # 将默认路径插入输入框，不包含文件名
 
     # 确认下载按钮
