@@ -1,37 +1,25 @@
-import requests
 from bs4 import BeautifulSoup
 from docx import Document
 from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from tkinter import messagebox
 
-def fetch_script(script_id):
-    url = f'https://aipiaxi.com/article-detail/{script_id}'  # 拼接URL
-    try:
-        response = requests.get(url)
-
-        # 检查是否错误
-        if response.status_code != 200:
-            messagebox.showerror("错误", f"网页访问出错，状态码{response.status_code}")
-            return
-
-        response.raise_for_status()  # 确保请求成功
-        html_content = response.text
-
-        if "timeout:" in html_content:  # 检查页面内容是否为空
-            messagebox.showerror("错误", "访问超时，请确认剧本号是否存在")
-            return
-
-        return html_content
-    
-    except Exception as e:
-        messagebox.showerror("错误", str(e))
-
 def parse_script(html_content, save_path):
-
     # 使用 BeautifulSoup 解析 HTML
-    soup = BeautifulSoup(html_content, 'html.parser')
+    soup = BeautifulSoup(html_content, 'html.parser').find('main').find('div', class_='body')
 
+    if soup.find('div', class_="article-content"): # 爱pia戏时期剧本
+        parse_old_script(soup.find('div', class_="article-content"), save_path)
+    elif soup.find('div', class_="xj-article"): # 戏鲸时期剧本
+        parse_new_script(soup.find('div', class_="xj-article"), save_path)
+    else:
+        messagebox.showinfo("提示", "剧本格式暂不支持，请联系软件作者。")
+
+def parse_old_script(soup, save_path):
+    pass
+
+
+def parse_new_script(soup, save_path):    
     # 创建 Word 文档
     doc = Document()
 
@@ -53,7 +41,7 @@ def parse_script(html_content, save_path):
                 run_title.bold = True
                 title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
                 is_header = False
-            else:  # 其余为次级标题或其它
+            else:  # 其余为次级标题或更次级标题
                 heading = doc.add_paragraph(style='Heading ' + paragraph.name[-1])
                 run_heading = heading.add_run(header_text.strip())
                 run_heading.font.size = Pt(8 + 2 * eval(paragraph.name[-1]))
@@ -127,3 +115,4 @@ def parse_script(html_content, save_path):
     # 保存 Word 文档
     doc.save(save_path)
     messagebox.showinfo("成功", f"Word文档已生成：{save_path}")
+
