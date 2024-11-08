@@ -1,4 +1,5 @@
-from script import parse_script, fetch_script
+from fetch_script import fetch_script
+from parse_script import parse_script
 
 import tkinter as tk
 from tkinter import messagebox, filedialog
@@ -33,8 +34,11 @@ def on_confirm(entry_id, entry_path, entry_file_name):
 
     # 这里可以添加你想要执行下载的逻辑
     # 例如：
-    messagebox.showinfo("下载确认", f"剧本将保存到：{full_path}")
-    parse_script(fetch_script(script_id), full_path)  # 假设这是实际下载函数
+    result = messagebox.askyesno("下载确认", f"剧本将保存到：{full_path}")
+    if result:
+        parse_script(fetch_script(script_id), full_path)  # 假设这是实际下载函数
+    else:
+        pass
 
 def GUI_mainloop():
 
