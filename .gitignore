@@ -2,5 +2,5 @@
 *.log
 build/
 __pycache__/
-dist/
+doing/
 output/

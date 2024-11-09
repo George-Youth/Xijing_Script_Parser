@@ -16,8 +16,16 @@ def parse_script(html_content, save_path):
         messagebox.showinfo("提示", "剧本格式暂不支持，请联系软件作者。")
 
 def parse_old_script(soup, save_path):
-    pass
+    # 创建 Word 文档
+    doc = Document()
 
+    # 提取文本写入Word文档
+    for line in soup.get_text(separator="\n", strip=True).splitlines():
+        doc.add_paragraph(line)
+
+    # 保存Word文档
+    doc.save(save_path)
+    messagebox.showinfo("成功", f"Word文档已生成：{save_path}")
 
 def parse_new_script(soup, save_path):    
     # 创建 Word 文档
@@ -39,7 +47,7 @@ def parse_new_script(soup, save_path):
                 run_title.font.size = Pt(20)
                 run_title.font.color.rgb = RGBColor(0, 0, 0)
                 run_title.bold = True
-                title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                # title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
                 is_header = False
             else:  # 其余为次级标题或更次级标题
                 heading = doc.add_paragraph(style='Heading ' + paragraph.name[-1])
