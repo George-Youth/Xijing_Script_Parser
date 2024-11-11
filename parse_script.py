@@ -4,6 +4,8 @@ from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from tkinter import messagebox
 
+
+
 def parse_script(html_content, save_path):
     # 使用 BeautifulSoup 解析 HTML
     soup = BeautifulSoup(html_content, 'html.parser').find('main').find('div', class_='body')
@@ -14,6 +16,8 @@ def parse_script(html_content, save_path):
         parse_new_script(soup.find('div', class_="xj-article"), save_path)
     else:
         messagebox.showinfo("提示", "剧本格式暂不支持，请联系软件作者。")
+
+
 
 def parse_old_script(soup, save_path):
     # 创建 Word 文档
@@ -26,6 +30,8 @@ def parse_old_script(soup, save_path):
     # 保存Word文档
     doc.save(save_path)
     messagebox.showinfo("成功", f"Word文档已生成：{save_path}")
+
+
 
 def parse_new_script(soup, save_path):    
     # 创建 Word 文档
@@ -47,7 +53,7 @@ def parse_new_script(soup, save_path):
                 run_title.font.size = Pt(20)
                 run_title.font.color.rgb = RGBColor(0, 0, 0)
                 run_title.bold = True
-                # title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
                 is_header = False
             else:  # 其余为次级标题或更次级标题
                 heading = doc.add_paragraph(style='Heading ' + paragraph.name[-1])
@@ -66,7 +72,6 @@ def parse_new_script(soup, save_path):
                 color = style['color'] if 'color' in style.keys() else '#000000'  # 获取刷色色号
                 
             if (paragraph.get('type') == 'conversation') or (paragraph.get('data-number') != None): # 解析对话
-                    
                 coversation = doc.add_paragraph(style='Normal')
                 for element in paragraph.children:
                     if ((element.name == 'span' and element.get('type') == 'xj-tips') or element.name == 'strong'):
@@ -92,7 +97,6 @@ def parse_new_script(soup, save_path):
                         except Exception as e:
                             print("Error 2:", str(e))
                             
-
             else:  # 解析其余
                 special_label = paragraph.find('span', {'type': 'special-label'})
                 if 'text-align' in style.keys():
@@ -118,7 +122,6 @@ def parse_new_script(soup, save_path):
                             run_center.font.bold = True
                     except Exception as e:
                         print("Error 4:", str(e))
-
 
     # 保存 Word 文档
     doc.save(save_path)
